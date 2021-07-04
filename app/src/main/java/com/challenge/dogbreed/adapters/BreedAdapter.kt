@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.challenge.dogbreed.activities.BreedsGridActivity
 import com.challenge.dogbreed.activities.DogsActivity
 import com.challenge.dogbreed.databinding.DogBreedBinding
 import com.challenge.dogbreed.models.Breed
@@ -39,7 +38,7 @@ class BreedAdapter(
             .into(breedViewHolder.binding.breedImageView)
 
         breedViewHolder.binding.root.setOnClickListener {
-            var intent: Intent = Intent(context, BreedsGridActivity::class.java)
+            var intent: Intent = Intent(context, DogsActivity::class.java)
             intent.putExtra("breed_id", dog.id.toString())
             context.startActivity(intent)
         }

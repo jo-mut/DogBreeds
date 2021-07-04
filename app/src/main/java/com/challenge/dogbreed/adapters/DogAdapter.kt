@@ -7,11 +7,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.challenge.dogbreed.databinding.ItemBreedBinding
-import com.challenge.dogbreed.models.Breed
+import com.challenge.dogbreed.models.Dog
+import com.challenge.dogbreed.models.DogBreed
 
 class DogAdapter(
     private val context: Context,
-    private val breeds: MutableList<Breed>
+    private val dogs: MutableList<DogBreed>
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -24,18 +25,18 @@ class DogAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val breed: Breed = breeds[position]
-        Log.d("breed_object", breed.toString())
+        val dog: DogBreed = dogs[position]
+        Log.d("breed_object", dog.toString())
 
         val dogViewHolder = holder as DogsViewHolder
         Glide.with(context)
             .asBitmap()
-            .load(breed.image.url)
+            .load(dog.url)
             .into(dogViewHolder.binding.dogImageView)
 
     }
 
     override fun getItemCount(): Int {
-        return breeds.size
+        return dogs.size
     }
 }

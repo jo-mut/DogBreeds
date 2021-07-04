@@ -43,7 +43,10 @@ data class Dog(
 )
 
 data class DogBreed(
-    @SerializedName("image") val image: Image,
+    @SerializedName("id") val id: String,
+    @SerializedName("url") val url: String,
+    @SerializedName("height") val height: Int,
+    @SerializedName("width") val width: Int,
     @SerializedName("breeds") val breeds: MutableList<Dog>,
 )
 

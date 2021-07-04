@@ -1,16 +1,18 @@
 package com.challenge.dogbreed.activities
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.challenge.dogbreed.Constants
 import com.challenge.dogbreed.adapters.DogAdapter
 import com.challenge.dogbreed.databinding.ActivityDogsBinding
 import com.challenge.dogbreed.interfaces.ApiService
-import com.challenge.dogbreed.models.DogBreed
 import com.challenge.dogbreed.models.Dog
+import com.challenge.dogbreed.models.DogBreed
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
@@ -23,6 +25,8 @@ class DogsActivity : AppCompatActivity() {
     lateinit var dogsAdapter: DogAdapter;
     private lateinit var binding: ActivityDogsBinding
     private val okHttpClient: OkHttpClient.Builder = OkHttpClient.Builder()
+//        .addInterceptor { chain -> return@addInterceptor addApiKeyToRequests(chain) }
+
     private val httpLoggingInterceptor: HttpLoggingInterceptor = HttpLoggingInterceptor()
     var mResponse: MutableList<DogBreed>? = null
     private lateinit var breed_id: String
@@ -50,6 +54,13 @@ class DogsActivity : AppCompatActivity() {
         httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
         okHttpClient.addInterceptor(httpLoggingInterceptor)
 
+//        okHttpClient.networkInterceptors().add(Interceptor { chain ->
+//            val requestBuilder: Request.Builder = chain.request().newBuilder()
+//            requestBuilder.header("Content-Type", "application/json")
+//            requestBuilder.header("x-api-key", Constants.ACCESS_KEY)
+//            chain.proceed(requestBuilder.build())
+//        })
+
         val retrofit = Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -57,9 +68,10 @@ class DogsActivity : AppCompatActivity() {
             .build()
 
         val request = retrofit.create(ApiService::class.java)
-        val call = request.getDogsByBreedName(Constants.ACCESS_KEY, breed_id, limit)
+        val call = request.getDogsByBreedName(breed_id, "RANDOM", "0", limit, Constants.ACCESS_KEY)
         call.enqueue(object : Callback<MutableList<DogBreed>> {
             override fun onFailure(call: Call<MutableList<DogBreed>>, t: Throwable) {
+                Log.d("fail_of_dogs", mResponse.toString())
 
             }
 
@@ -70,7 +82,8 @@ class DogsActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     mResponse = response.body()
                     if (mResponse != null) {
-//                        updateRecyclerView(mResponse!!)
+                                        Log.d("list_of_dogs", mResponse.toString())
+                        updateRecyclerView(mResponse!!)
                     }
                 }
             }
@@ -79,22 +92,27 @@ class DogsActivity : AppCompatActivity() {
         return mResponse
     }
 
-//    fun updateRecyclerView(dogBreeds: MutableList<DogBreed>) {
-//        var images: MutableList<Dog>? = null
+//    private fun addApiKeyToRequests(chain: Interceptor.Chain): Response {
+//        val request = chain.request().newBuilder()
+//        val originalHttpUrl = chain.request().url
+//        val newUrl = originalHttpUrl.newBuilder()
+//            .addQueryParameter("api_key", "my_api_key").build()
+//        request.url(newUrl)
+//        return chain.proceed(request.build())
+//    }
+
+    fun updateRecyclerView(dogBreeds: MutableList<DogBreed>) {
+        Log.d("list_of_dogs", dogBreeds.toString())
+
+        dogsAdapter = DogAdapter(this@DogsActivity,  dogBreeds)
+        val layoutManager = GridLayoutManager(this@DogsActivity, 3)
+        binding.breedsRecyclerView.adapter = dogsAdapter;
+        binding.breedsRecyclerView.layoutManager = layoutManager;
+        binding.breedsRecyclerView.setHasFixedSize(false)
 //        dogBreeds.forEach { dogBreed: DogBreed ->
-//            dogBreed.breeds.forEach {
-//                images?.toMutableList()?.add(it)
-//                Log.d("list_of_dogs", it.toString())
-//                if (images != null) {
-//                    dogsAdapter = DogAdapter(this@DogsActivity, images)
-//                    val layoutManager = GridLayoutManager(this@DogsActivity, 3)
-//                    binding.breedsRecyclerView.adapter = dogsAdapter;
-//                    binding.breedsRecyclerView.layoutManager = layoutManager;
-//                    binding.breedsRecyclerView.setHasFixedSize(false)
-//                }
-//            }
+//
 //
 //        }
-//
-//    }
+
+    }
 }
