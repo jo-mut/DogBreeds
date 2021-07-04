@@ -8,7 +8,6 @@ import com.challenge.dogbreed.Constants
 import com.challenge.dogbreed.adapters.DogAdapter
 import com.challenge.dogbreed.databinding.ActivityDogsBinding
 import com.challenge.dogbreed.interfaces.ApiService
-import com.challenge.dogbreed.models.Dog
 import com.challenge.dogbreed.models.DogBreed
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -19,7 +18,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
+
 
 class DogsActivity : AppCompatActivity() {
     lateinit var dogsAdapter: DogAdapter;
@@ -29,7 +28,7 @@ class DogsActivity : AppCompatActivity() {
     private val httpLoggingInterceptor: HttpLoggingInterceptor = HttpLoggingInterceptor()
     var mResponse: MutableList<DogBreed>? = null
     private lateinit var breed_id: String
-    val limit: Int = 102;
+    private val limit: Int = 10
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,22 +44,38 @@ class DogsActivity : AppCompatActivity() {
         }
     }
 
+
     private fun getDogsByBreeds(breed_id: String): MutableList<DogBreed>? {
 //        okHttpClient.readTimeout(12, TimeUnit.SECONDS)
 //        okHttpClient.connectTimeout(12, TimeUnit.SECONDS)
 //        okHttpClient.writeTimeout(12, TimeUnit.SECONDS)
 //
 
+        val interceptor = Interceptor { chain ->
+            val original = chain.request()
+            val originalHttpUrl = original.url()
+            val url = originalHttpUrl.newBuilder()
+                .addQueryParameter("x-api-key", "f9eab4d3-46c2-4208-aeb9-1ce02b8e2b94")
+                .build()
 
-        okHttpClient.networkInterceptors().add(Interceptor { chain ->
-            val requestBuilder: Request.Builder = chain.request().newBuilder()
-            requestBuilder.header("Content-Type", "application/json")
-            requestBuilder.header("x-api-key", Constants.ACCESS_KEY)
-            chain.proceed(requestBuilder.build())
-        })
+            // Request customization: add request headers
+            val requestBuilder = original.newBuilder()
+                .url(url)
+            val request = requestBuilder.build()
+            chain.proceed(request)
+        }
+
+//        // Define the interceptor, add authentication headers
+//        val interceptor = Interceptor { chain ->
+//            val requestBuilder: Request.Builder = chain.request().newBuilder()
+//            requestBuilder.addHeader("Content-Type", "application/json")
+//            requestBuilder.addHeader("x-api-key", "f9eab4d3-46c2-4208-aeb9-1ce02b8e2b94")
+//            chain.proceed(requestBuilder.build())
+//        }
 
         httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
         okHttpClient.addInterceptor(httpLoggingInterceptor)
+            .addInterceptor(interceptor)
 
         val retrofit = Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
@@ -83,7 +98,7 @@ class DogsActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     mResponse = response.body()
                     if (mResponse != null) {
-                                        Log.d("list_of_dogs", mResponse.toString())
+                        Log.d("list_of_dogs", mResponse.toString())
                         updateRecyclerView(mResponse!!)
                     }
                 }
@@ -94,10 +109,12 @@ class DogsActivity : AppCompatActivity() {
     }
 
     fun updateRecyclerView(dogBreeds: MutableList<DogBreed>) {
-        dogsAdapter = DogAdapter(this@DogsActivity,  dogBreeds)
+        dogsAdapter = DogAdapter(this@DogsActivity, dogBreeds)
         val layoutManager = GridLayoutManager(this@DogsActivity, 3)
         binding.breedsRecyclerView.adapter = dogsAdapter;
         binding.breedsRecyclerView.layoutManager = layoutManager;
         binding.breedsRecyclerView.setHasFixedSize(false)
     }
+
+
 }
