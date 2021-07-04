@@ -16,15 +16,12 @@ interface ApiService {
         @Query("limit") limit: Int
     ): Call<MutableList<Breed>>
 
-
-    @Headers("x-api-key: f9eab4d3-46c2-4208-aeb9-1ce02b8e2b94")
     @GET("images/search?")
     fun getDogsByBreedName(
         @Query("breed_id") breed_id: String,
         @Query("order") order: String,
         @Query("page") page: String,
-        @Query("limit") limit: Int,
-        @Query("x-api-key") api_key: String
+        @Query("limit") limit: Int
     ): Call<MutableList<DogBreed>>
 
 }
