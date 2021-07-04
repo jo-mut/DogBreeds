@@ -19,8 +19,7 @@ interface ApiService {
     @GET("images/search?")
     fun getDogsByBreedName(
         @Query("breed_id") breed_id: String,
-        @Query("order") order: String,
-        @Query("page") page: String,
+        @Query("page") page: Int,
         @Query("limit") limit: Int
     ): Call<MutableList<DogBreed>>
 

@@ -1,6 +1,7 @@
 package com.challenge.dogbreed.activities
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -41,6 +42,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    /**
+     *Get a list of dog breeds from the api**/
     private fun getBreeds(): MutableList<Breed>? {
         okHttpClient.readTimeout(12, TimeUnit.SECONDS)
         okHttpClient.connectTimeout(12, TimeUnit.SECONDS)
@@ -59,7 +62,7 @@ class MainActivity : AppCompatActivity() {
         val call = request.getBreeds(Constants.ACCESS_KEY, 102)
         call.enqueue(object : Callback<MutableList<Breed>> {
             override fun onFailure(call: Call<MutableList<Breed>>, t: Throwable) {
-
+                Log.d("failure", t.toString())
             }
 
             override fun onResponse(
@@ -67,7 +70,7 @@ class MainActivity : AppCompatActivity() {
                 response: Response<MutableList<Breed>>
             ) {
                 if (response.isSuccessful) {
-
+                    Log.d("success", mResponse.toString())
                     mResponse = response.body()
                     if (mResponse != null) {
                         updateRecyclerView(mResponse)
@@ -79,6 +82,8 @@ class MainActivity : AppCompatActivity() {
         return mResponse
     }
 
+    /**
+     * update the recycler view with serialized api data**/
     fun updateRecyclerView(breeds: MutableList<Breed>?) {
         breedAdapter = BreedAdapter(this@MainActivity, breeds!!)
         val layoutManager = LinearLayoutManager(this@MainActivity)

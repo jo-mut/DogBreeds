@@ -24,11 +24,11 @@ class DogsActivity : AppCompatActivity() {
     lateinit var dogsAdapter: DogAdapter;
     private lateinit var binding: ActivityDogsBinding
     private val okHttpClient: OkHttpClient.Builder = OkHttpClient.Builder()
-
     private val httpLoggingInterceptor: HttpLoggingInterceptor = HttpLoggingInterceptor()
     var mResponse: MutableList<DogBreed>? = null
     private lateinit var breed_id: String
     private val limit: Int = 10
+    private val page: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,13 +44,11 @@ class DogsActivity : AppCompatActivity() {
         }
     }
 
-
+    /**
+     *Get a list of images of the selected dog breeds from the api**/
     private fun getDogsByBreeds(breed_id: String): MutableList<DogBreed>? {
-//        okHttpClient.readTimeout(12, TimeUnit.SECONDS)
-//        okHttpClient.connectTimeout(12, TimeUnit.SECONDS)
-//        okHttpClient.writeTimeout(12, TimeUnit.SECONDS)
-//
 
+        //interceptor, add api key and headers
         val interceptor = Interceptor { chain ->
             val original = chain.request()
             val originalHttpUrl = original.url()
@@ -65,13 +63,6 @@ class DogsActivity : AppCompatActivity() {
             chain.proceed(request)
         }
 
-//        // Define the interceptor, add authentication headers
-//        val interceptor = Interceptor { chain ->
-//            val requestBuilder: Request.Builder = chain.request().newBuilder()
-//            requestBuilder.addHeader("Content-Type", "application/json")
-//            requestBuilder.addHeader("x-api-key", "f9eab4d3-46c2-4208-aeb9-1ce02b8e2b94")
-//            chain.proceed(requestBuilder.build())
-//        }
 
         httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
         okHttpClient.addInterceptor(httpLoggingInterceptor)
@@ -84,11 +75,10 @@ class DogsActivity : AppCompatActivity() {
             .build()
 
         val request = retrofit.create(ApiService::class.java)
-        val call = request.getDogsByBreedName(breed_id, "RANDOM", "0", limit)
+        val call = request.getDogsByBreedName(breed_id,  page, limit)
         call.enqueue(object : Callback<MutableList<DogBreed>> {
             override fun onFailure(call: Call<MutableList<DogBreed>>, t: Throwable) {
-                Log.d("fail_of_dogs", mResponse.toString())
-
+                Log.d("failure", t.toString())
             }
 
             override fun onResponse(
@@ -98,7 +88,7 @@ class DogsActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     mResponse = response.body()
                     if (mResponse != null) {
-                        Log.d("list_of_dogs", mResponse.toString())
+                        Log.d("success", mResponse.toString())
                         updateRecyclerView(mResponse!!)
                     }
                 }
@@ -108,6 +98,8 @@ class DogsActivity : AppCompatActivity() {
         return mResponse
     }
 
+    /**
+     * update the recycler view with serialized api data**/
     fun updateRecyclerView(dogBreeds: MutableList<DogBreed>) {
         dogsAdapter = DogAdapter(this@DogsActivity, dogBreeds)
         val layoutManager = GridLayoutManager(this@DogsActivity, 3)
@@ -115,6 +107,5 @@ class DogsActivity : AppCompatActivity() {
         binding.breedsRecyclerView.layoutManager = layoutManager;
         binding.breedsRecyclerView.setHasFixedSize(false)
     }
-
 
 }
