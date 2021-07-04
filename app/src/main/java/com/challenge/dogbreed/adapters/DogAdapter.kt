@@ -26,8 +26,6 @@ class DogAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val dog: DogBreed = dogs[position]
-        Log.d("breed_object", dog.toString())
-
         val dogViewHolder = holder as DogsViewHolder
         Glide.with(context)
             .asBitmap()

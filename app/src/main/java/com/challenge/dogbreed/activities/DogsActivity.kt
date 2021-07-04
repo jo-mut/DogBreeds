@@ -102,8 +102,6 @@ class DogsActivity : AppCompatActivity() {
 //    }
 
     fun updateRecyclerView(dogBreeds: MutableList<DogBreed>) {
-        Log.d("list_of_dogs", dogBreeds.toString())
-
         dogsAdapter = DogAdapter(this@DogsActivity,  dogBreeds)
         val layoutManager = GridLayoutManager(this@DogsActivity, 3)
         binding.breedsRecyclerView.adapter = dogsAdapter;
