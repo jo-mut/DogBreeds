@@ -27,7 +27,7 @@ class DogsActivity : AppCompatActivity() {
     private val httpLoggingInterceptor: HttpLoggingInterceptor = HttpLoggingInterceptor()
     var mResponse: MutableList<DogBreed>? = null
     private lateinit var breed_id: String
-    private val limit: Int = 10
+    private val limit: Int = 100
     private val page: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
