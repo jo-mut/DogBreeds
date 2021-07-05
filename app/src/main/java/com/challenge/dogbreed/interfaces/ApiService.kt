@@ -12,7 +12,7 @@ import retrofit2.http.Query
 interface ApiService {
     @GET("breeds")
     fun getBreeds(
-        @Query("api_key") api_key: String,
+        @Query("page") page: Int,
         @Query("limit") limit: Int
     ): Call<MutableList<Breed>>
 
