@@ -8,10 +8,9 @@ import com.challenge.dogbreed.Constants
 import com.challenge.dogbreed.adapters.DogAdapter
 import com.challenge.dogbreed.databinding.ActivityDogsBinding
 import com.challenge.dogbreed.interfaces.ApiService
-import com.challenge.dogbreed.models.DogBreed
+import com.challenge.dogbreed.models.DogBreedSerializer
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
@@ -25,7 +24,7 @@ class DogsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDogsBinding
     private val okHttpClient: OkHttpClient.Builder = OkHttpClient.Builder()
     private val httpLoggingInterceptor: HttpLoggingInterceptor = HttpLoggingInterceptor()
-    var mResponse: MutableList<DogBreed>? = null
+    var mResponse: MutableList<DogBreedSerializer>? = null
     private lateinit var breed_id: String
     private val limit: Int = 100
     private val page: Int = 0
@@ -46,7 +45,7 @@ class DogsActivity : AppCompatActivity() {
 
     /**
      *Get a list of images of the selected dog breeds from the api**/
-    private fun getDogsByBreeds(breed_id: String): MutableList<DogBreed>? {
+    private fun getDogsByBreeds(breed_id: String): MutableList<DogBreedSerializer>? {
 
         //interceptor, add api key and headers
         val interceptor = Interceptor { chain ->
@@ -76,14 +75,14 @@ class DogsActivity : AppCompatActivity() {
 
         val request = retrofit.create(ApiService::class.java)
         val call = request.getDogsByBreedName(breed_id,  page, limit)
-        call.enqueue(object : Callback<MutableList<DogBreed>> {
-            override fun onFailure(call: Call<MutableList<DogBreed>>, t: Throwable) {
+        call.enqueue(object : Callback<MutableList<DogBreedSerializer>> {
+            override fun onFailure(call: Call<MutableList<DogBreedSerializer>>, t: Throwable) {
                 Log.d("failure", t.toString())
             }
 
             override fun onResponse(
-                call: Call<MutableList<DogBreed>>,
-                response: Response<MutableList<DogBreed>>
+                call: Call<MutableList<DogBreedSerializer>>,
+                response: Response<MutableList<DogBreedSerializer>>
             ) {
                 if (response.isSuccessful) {
                     mResponse = response.body()
@@ -100,8 +99,8 @@ class DogsActivity : AppCompatActivity() {
 
     /**
      * update the recycler view with serialized api data**/
-    fun updateRecyclerView(dogBreeds: MutableList<DogBreed>) {
-        dogsAdapter = DogAdapter(this@DogsActivity, dogBreeds)
+    fun updateRecyclerView(dogBreedSerializers: MutableList<DogBreedSerializer>) {
+        dogsAdapter = DogAdapter(this@DogsActivity, dogBreedSerializers)
         val layoutManager = GridLayoutManager(this@DogsActivity, 3)
         binding.breedsRecyclerView.adapter = dogsAdapter;
         binding.breedsRecyclerView.layoutManager = layoutManager;

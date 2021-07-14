@@ -1,18 +1,16 @@
 package com.challenge.dogbreed.adapters
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.challenge.dogbreed.databinding.ItemBreedBinding
-import com.challenge.dogbreed.models.Dog
-import com.challenge.dogbreed.models.DogBreed
+import com.challenge.dogbreed.models.DogBreedSerializer
 
 class DogAdapter(
     private val context: Context,
-    private val dogs: MutableList<DogBreed>
+    private val dogSerializers: MutableList<DogBreedSerializer>
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -25,16 +23,16 @@ class DogAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val dog: DogBreed = dogs[position]
+        val dogSerializer: DogBreedSerializer = dogSerializers[position]
         val dogViewHolder = holder as DogsViewHolder
         Glide.with(context)
             .asBitmap()
-            .load(dog.url)
+            .load(dogSerializer.url)
             .into(dogViewHolder.binding.dogImageView)
 
     }
 
     override fun getItemCount(): Int {
-        return dogs.size
+        return dogSerializers.size
     }
 }

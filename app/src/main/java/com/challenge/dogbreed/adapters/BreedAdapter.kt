@@ -12,7 +12,7 @@ import com.challenge.dogbreed.models.Breed
 
 class BreedAdapter(
     private val context: Context,
-    private val breeds: MutableList<Breed>
+    private val breedSerializers: List<Breed>
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -25,27 +25,27 @@ class BreedAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        var dog: Breed = breeds[position]
+        var breed: Breed = breedSerializers[position]
         val breedViewHolder = holder as BreedViewHolder
-        breedViewHolder.binding.breedTextView.text = dog.name
-        breedViewHolder.binding.lifeSpanTextView.text = dog.life_span
-        breedViewHolder.binding.bredForTextView.text = dog.bred_for
-        breedViewHolder.binding.originTextView.text = dog.origin
+        breedViewHolder.binding.breedTextView.text = breed.name
+        breedViewHolder.binding.lifeSpanTextView.text = breed.life_span
+        breedViewHolder.binding.bredForTextView.text = breed.bred_for
+        breedViewHolder.binding.originTextView.text = breed.origin
 
-        Glide.with(context)
-            .asBitmap()
-            .load(dog.image.url)
-            .into(breedViewHolder.binding.breedImageView)
+//        Glide.with(context)
+//            .asBitmap()
+//            .load(breed.)
+//            .into(breedViewHolder.binding.breedImageView)
 
         breedViewHolder.binding.root.setOnClickListener {
             var intent: Intent = Intent(context, DogsActivity::class.java)
-            intent.putExtra("breed_id", dog.id.toString())
+            intent.putExtra("breed_id", breed.id.toString())
             context.startActivity(intent)
         }
 
     }
 
     override fun getItemCount(): Int {
-        return breeds.size
+        return breedSerializers.size
     }
 }
