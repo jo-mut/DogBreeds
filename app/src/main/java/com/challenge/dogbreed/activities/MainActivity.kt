@@ -14,7 +14,6 @@ import com.challenge.dogbreed.databinding.ActivityMainBinding
 import com.challenge.dogbreed.models.Breed
 import com.challenge.dogbreed.repository.BreedRepository
 import kotlinx.coroutines.*
-import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -24,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     var breedReposity: BreedRepository? = null
     var database: BreedRoomDatabase? = null
     var breedViewModel: BreedViewModel? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +39,6 @@ class MainActivity : AppCompatActivity() {
             Log.d("response breeds", breeds.toString())
             updateRecyclerView(breeds)
         }
-
 
     }
 
